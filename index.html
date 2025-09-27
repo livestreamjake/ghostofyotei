@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Key Generator</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body, html {
+      height: 100%;
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: url("bg.jpg") no-repeat center center/cover;
+      position: relative;
+      color: #fff;
+    }
+
+    /* Blur overlay for background */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: inherit;
+      filter: blur(8px) brightness(0.6);
+      z-index: -1;
+    }
+
+    .container {
+      background: rgba(0, 0, 0, 0.85);
+      padding: 2rem;
+      border-radius: 16px;
+      max-width: 600px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 0 25px rgba(0, 255, 100, 0.5);
+    }
+
+    .logo {
+      max-width: 180px;
+      margin: 0 auto 1rem;
+      display: block;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #0f0;
+    }
+
+    .sub-header {
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+      color: #ccc;
+    }
+
+    .code {
+      font-size: 1.4rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      cursor: pointer;
+      padding: 0.8rem 1.2rem;
+      border: 2px dashed #0f0;
+      border-radius: 10px;
+      display: inline-block;
+      transition: all 0.3s;
+      background: rgba(0, 255, 0, 0.05);
+      color: #fff;
+    }
+
+    .code:hover {
+      background: rgba(0, 255, 0, 0.2);
+      transform: scale(1.05);
+    }
+
+    .loading-section {
+      margin-top: 2rem;
+      display: none;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 20px;
+      background: #222;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+      border: 1px solid #0f0;
+    }
+
+    .progress {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #0f0, #00ffcc, #0ff);
+      background-size: 200% 100%;
+      animation: slide 2s linear infinite;
+      transition: width 0.3s;
+    }
+
+    @keyframes slide {
+      from { background-position: 200% 0; }
+      to { background-position: -200% 0; }
+    }
+
+    .status-text {
+      font-size: 1rem;
+      margin-top: 0.5rem;
+      font-style: italic;
+      color: #ddd;
+    }
+
+    .verify-section {
+      display: none;
+      margin-top: 2rem;
+    }
+
+    .fake-captcha {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      margin-bottom: 1.2rem;
+      background: rgba(30,30,30,0.9);
+      border: 1px solid #0f0;
+      border-radius: 10px;
+      padding: 1rem;
+    }
+
+    .fake-captcha input {
+      width: 20px;
+      height: 20px;
+      accent-color: #0f0;
+      cursor: pointer;
+    }
+
+    .btn {
+      background: #0f0;
+      color: #000;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      font-weight: 600;
+    }
+
+    .btn:hover {
+      background: #00cc99;
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.3rem; }
+      .code { font-size: 1.1rem; }
+    }
+	
+	
+	.codes-left {
+	  font-size: 1.1rem;
+	  font-weight: 600;
+	  color: #ff4d4d;
+	  margin-bottom: 1.5rem;
+	  text-shadow: 0 0 5px rgba(255, 0, 0, 0.7);
+	}
+
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Replace logo src with your game logo -->
+    <img src="logo.png" alt="Loot Games" class="logo">
+
+    <h1>PS5 Key Generator</h1>
+    <div class="sub-header">Get your free activation code instantly</div>
+    <div class="codes-left" id="codesLeft"></div>
+
+    <div class="code" id="activationCode">XAFK-XXX-XXXX</div>
+
+    <div class="loading-section" id="loadingSection">
+      <div class="progress-bar">
+        <div class="progress" id="progressBar"></div>
+      </div>
+      <div class="status-text" id="statusText">Initializing...</div>
+    </div>
+
+    <div class="verify-section" id="verifySection">
+      <div class="fake-captcha">
+        <input type="checkbox" id="robotCheck">
+        <label for="robotCheck">I'm not a robot</label>
+      </div>
+      <button class="btn" id="unlockBtn" disabled>Unlock Code</button>
+    </div>
+  </div>
+
+  <script>
+    const activationCode = document.getElementById("activationCode");
+    const loadingSection = document.getElementById("loadingSection");
+    const progressBar = document.getElementById("progressBar");
+    const statusText = document.getElementById("statusText");
+    const verifySection = document.getElementById("verifySection");
+    const unlockBtn = document.getElementById("unlockBtn");
+    const robotCheck = document.getElementById("robotCheck");
+
+    const statuses = [
+      "Connecting to servers...",
+      "Generating secure key...",
+      "Encrypting data...",
+      "Finalizing..."
+    ];
+
+    activationCode.addEventListener("click", () => {
+      activationCode.style.display = "none";
+      loadingSection.style.display = "block";
+      let progress = 0;
+      let step = 0;
+
+      const interval = setInterval(() => {
+        progress += 10;
+        progressBar.style.width = progress + "%";
+
+        if (progress % 25 === 0 && step < statuses.length) {
+          statusText.textContent = statuses[step];
+          step++;
+        }
+
+        if (progress >= 100) {
+          clearInterval(interval);
+          loadingSection.style.display = "none";
+          verifySection.style.display = "block";
+        }
+      }, 400);
+    });
+
+    robotCheck.addEventListener("change", () => {
+      unlockBtn.disabled = !robotCheck.checked;
+    });
+
+    unlockBtn.addEventListener("click", () => {
+      // Redirect to CPA link
+      window.location.href = "https://lockverify.org/cl/i/9vqx5r";
+    });
+	
+	
+	// --- Codes Left Counter ---
+	const codesLeftElement = document.getElementById("codesLeft");
+	let codesLeft = localStorage.getItem("codesLeft");
+
+	// Initialize if not set
+	if (codesLeft === null) {
+	  codesLeft = 465;
+	  localStorage.setItem("codesLeft", codesLeft);
+	} else {
+	  codesLeft = parseInt(codesLeft, 10);
+	}
+
+	codesLeftElement.textContent = `${codesLeft} codes left`;
+
+	// Function to decrease counter at random intervals
+	function decreaseCodes() {
+	  if (codesLeft > 0) {
+		codesLeft--;
+		localStorage.setItem("codesLeft", codesLeft);
+		codesLeftElement.textContent = `${codesLeft} codes left`;
+	  }
+
+	  // Random delay between 1-3 seconds
+	  const randomDelay = Math.floor(Math.random() * 2000) + 1000;
+	  setTimeout(decreaseCodes, randomDelay);
+	}
+
+	// Start the random decrease
+	decreaseCodes();
+
+  </script>
+</body>
+</html>
